@@ -25,7 +25,7 @@ public class XltReportServer extends Verticle {
 		RouteMatcher rm = new RouteMatcher()
 
 		rm.get("/") { request ->
-			logDebug("Received request ${request.method} ${request.uri}")
+			logInfo("Received request ${request.method} ${request.uri}")
 			request.response.sendFile("web/index.html")
 		}
 
