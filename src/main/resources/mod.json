@@ -1,5 +1,5 @@
 {
-	"main":"groovy:thhi.vertx.mods.StarterVerticle",
+	"main":"groovy:thhi.vertx.mod.StarterVerticle",
 	"auto-redeploy": true,
 	
 	// Mandatory fields

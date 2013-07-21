@@ -3,13 +3,7 @@ import static org.vertx.testtools.VertxAssert.*
 import org.vertx.groovy.core.http.HttpClientResponse
 import org.vertx.groovy.testtools.VertxTests
 
-import thhi.vertx.mods.StarterVerticle;
-
-// import thhi.vertx.mods.Starter
-
-// The test methods must being with "test"
-
-import thhi.vertx.mods.StarterVerticle
+import thhi.vertx.mod.StarterVerticle
 
 def testStart() {
 	container.deployVerticle("groovy:" + StarterVerticle.class.name) { result ->
