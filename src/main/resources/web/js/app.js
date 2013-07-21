@@ -7,7 +7,7 @@ app.factory("xltReports", function($http, $q) {
 
 	this.getList = function() {
 		var defer = $q.defer();
-		$http.get("/list").success(function(data, status) {
+		$http.get("/reports/list").success(function(data, status) {
 			defer.resolve(data)
 		});
 		return defer.promise;

@@ -29,7 +29,7 @@ public class XltReportServer extends Verticle {
 			request.response.sendFile("web/index.html")
 		}
 
-		rm.get("/list") { request ->
+		rm.get("/reports/list") { request ->
 			def result =  []
 			reportDir.reports.each { xltReport ->
 				result.add(["name": xltReport.name, "sut": xltReport.sut])
@@ -37,19 +37,12 @@ public class XltReportServer extends Verticle {
 			request.response.end(new JsonObject(["reports": result]).toString())
 		}
 
-		rm.getWithRegEx(/.*\d{8}-\d{6}\/.*/) { request ->
+		rm.getWithRegEx(/\/reports\/\d{8}-\d{6}.*/) { request ->
 			logInfo("Received request ${request.method} ${request.uri}")
-
-			def nameMatcher = (request.uri =~ /.*(\d{8}-\d{6}).*/)
-			if(nameMatcher.matches()) {
-				def name = nameMatcher[0][1]
-				if(request.uri =~ /HitsPerSecond.png/) {
-					def graphFile =  reportDir.reports.find { name == it.name }.hitsPerSecondChart
-					request.response.sendFile(graphFile.path)
-				}
-			}
+			def root = reportDir.rootDir.path - (File.separator + "reports")
+			def path = root + request.uri
+			request.response.sendFile(path)
 		}
-
 
 		rm.getWithRegEx(".*") { request ->
 			logDebug("Received request ${request.method} ${request.uri}")
