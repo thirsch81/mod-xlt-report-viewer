@@ -5,7 +5,7 @@ import org.vertx.groovy.core.http.RouteMatcher
 import org.vertx.groovy.platform.Verticle
 import org.vertx.java.core.json.JsonObject
 
-public class XltReportServer extends Verticle {
+public class ReportServerVerticle extends Verticle {
 
 	static XltReportDir reportDir = null
 
@@ -16,23 +16,30 @@ public class XltReportServer extends Verticle {
 		def xltReportDir = container.config.reportDir
 
 		reportDir = new XltReportDir(xltReportDir)
+		reportDir.addReports()
 
-		createReportServer(hostname, port)
+		createWebServer(hostname, port)
 	}
 
-	def createReportServer(hostname, port) {
+	def createWebServer(hostname, port) {
 
 		RouteMatcher rm = new RouteMatcher()
 
 		rm.get("/") { request ->
-			logInfo("Received request ${request.method} ${request.uri}")
+			logDebug("Received request ${request.method} ${request.uri}")
 			request.response.sendFile("web/index.html")
 		}
 
 		rm.get("/reports/list") { request ->
 			def result =  []
-			reportDir.reports.each { xltReport ->
-				result.add(["name": xltReport.name, "sut": xltReport.sut])
+			reportDir.reports.each { report ->
+				result.add([
+					"name": report.name,
+					"indexPage" : report.indexPage,
+					"sut": report.sut,
+					"imagePath": report.mainLoadGraphPath,
+
+				])
 			}
 			request.response.end(new JsonObject(["reports": result]).toString())
 		}
@@ -41,7 +48,11 @@ public class XltReportServer extends Verticle {
 			logInfo("Received request ${request.method} ${request.uri}")
 			def root = reportDir.rootDir.path - (File.separator + "reports")
 			def path = root + request.uri
-			request.response.sendFile(path)
+			if(new File(path).isFile()) {
+				request.response.sendFile(path)
+			} else {
+				request.response.end("Ressource not found")
+			}
 		}
 
 		rm.getWithRegEx(".*") { request ->

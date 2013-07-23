@@ -6,7 +6,9 @@
 <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css">
 <link rel="stylesheet" type="text/css" href="css/main.css">
+<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
+<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
 <script src="http://cdn.sockjs.org/sockjs-0.3.4.min.js"></script>
 <script src="js/vertxbus.min.js"></script>
 </head>
@@ -21,9 +23,9 @@
 					<th x-ng-repeat="header in headers">{{header}}</th>
 				</tr>
 				<tr x-ng-repeat="report in xltReports">
-					<td>{{report.name}}</td>
+					<td><a href="/reports/{{report.indexPage}}">{{report.name}}</a></td>
 					<td>{{report.sut}}</td>
-					<td><img x-ng-src="/reports/{{report.name}}/charts/HitsPerSecond.png"></img></td>
+					<td><img class="loadgraph" x-ng-src="/reports/{{report.imagePath}}"></img></td>
 				</tr>
 			</table>
 		</div>
