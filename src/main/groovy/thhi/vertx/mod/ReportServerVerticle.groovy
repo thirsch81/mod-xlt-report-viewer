@@ -30,6 +30,15 @@ public class ReportServerVerticle extends Verticle {
 			request.response.sendFile("web/index.html")
 		}
 
+		rm.get("/reload") { request ->
+			logDebug("Received request ${request.method} ${request.uri}")
+			request.response
+					.setStatusCode(302)
+					.putHeader("Location", "http://" + hostname + ":" +  port + "/index.html")
+					.end()
+			reportDir.addReports()
+		}
+
 		rm.get("/reports/list") { request ->
 			logDebug("Received request ${request.method} ${request.uri}")
 			def result = reportDir.reports.collect { it.asMap() }
