@@ -38,7 +38,8 @@ class XltReport implements Comparable<XltReport> {
 	}
 
 	int compareTo(XltReport other) {
-		this.startTime <=> other.startTime
+		// reverse order
+		other.startTime <=> this.startTime
 	}
 
 	long getStartTime(name) {

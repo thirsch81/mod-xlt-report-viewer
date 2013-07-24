@@ -31,12 +31,13 @@ public class ReportServerVerticle extends Verticle {
 		}
 
 		rm.get("/reports/list") { request ->
+			logDebug("Received request ${request.method} ${request.uri}")
 			def result = reportDir.reports.collect { it.asMap() }
 			request.response.end(new JsonObject(["reports": result]).toString())
 		}
 
 		rm.getWithRegEx(/\/reports\/\d{8}-\d{6}.*/) { request ->
-			logInfo("Received request ${request.method} ${request.uri}")
+			logDebug("Received request ${request.method} ${request.uri}")
 			def root = reportDir.rootDir.path - (File.separator + "reports")
 			def path = root + request.uri
 			if(new File(path).isFile()) {

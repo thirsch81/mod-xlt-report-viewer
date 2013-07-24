@@ -2,7 +2,7 @@
 <html x-ng-app="xltReportViewer">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>vert.x AngularJS Base</title>
+<title>XLT Report Viewer</title>
 <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css">
 <link rel="stylesheet" type="text/css" href="css/main.css">
@@ -29,7 +29,7 @@
 					<td class="text-center"><img class="loadgraph" x-ng-src="/reports/{{report.mainLoadGraphPath}}"></img></td>
 					<td class="text-center">{{report.totalActions}}</td>
 					<td class="error-count text-center">{{report.totalErrors}}</td>
-					<td class="error-count text-center">{{report.errorRatio | number: 2}}</td>
+					<td class="error-count text-center">{{report.errorRatio | number: 3}}</td>
 				</tr>
 			</table>
 		</div>
