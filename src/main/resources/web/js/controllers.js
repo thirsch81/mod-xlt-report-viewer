@@ -1,14 +1,17 @@
 function Main($scope, $location, $log, xltReports) {
 
-	$scope.headers = ["Name", "SUT", "Main Load Graph"]
 	$scope.xltReports = [];
 
+	$scope.startTime = function(report) {
+		$log.log(report.startTime);
+		return new Date(report.startTime).toLocaleString();
+	}
+
 	xltReports.getList().then(function(data) {
-		$log.log(data)
-		
-		var reports = data.reports;
-		$scope.xltReports = reports;
+
+		$log.log(data);
+
+		$scope.xltReports = data.reports;
 	});
-	
-	
+
 }

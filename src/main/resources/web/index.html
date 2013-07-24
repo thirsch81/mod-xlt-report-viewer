@@ -18,14 +18,18 @@
 			<h3>XLT Report Viewer</h3>
 		</div>
 		<div>
-			<table class="table table-bordered table-condensed table-striped">
+			<table class="table table-bordered table-condensed">
 				<tr>
-					<th x-ng-repeat="header in headers">{{header}}</th>
+					<th x-ng-repeat='header in ["Name", "SUT", "Start time", "Main Load Graph", "Total Actions", "Total Errors", "Error %"]'>{{header}}</th>
 				</tr>
 				<tr x-ng-repeat="report in xltReports">
-					<td><a href="/reports/{{report.indexPage}}">{{report.name}}</a></td>
-					<td>{{report.sut}}</td>
-					<td><img class="loadgraph" x-ng-src="/reports/{{report.imagePath}}"></img></td>
+					<td class="text-center"><a href="/reports/{{report.indexPage}}">{{report.name}}</a></td>
+					<td class="text-center">{{report.sut}}</td>
+					<td class="text-center">{{startTime(report)}}</td>
+					<td class="text-center"><img class="loadgraph" x-ng-src="/reports/{{report.mainLoadGraphPath}}"></img></td>
+					<td class="text-center">{{report.totalActions}}</td>
+					<td class="error-count text-center">{{report.totalErrors}}</td>
+					<td class="error-count text-center">{{report.errorRatio | number: 2}}</td>
 				</tr>
 			</table>
 		</div>

@@ -31,16 +31,7 @@ public class ReportServerVerticle extends Verticle {
 		}
 
 		rm.get("/reports/list") { request ->
-			def result =  []
-			reportDir.reports.each { report ->
-				result.add([
-					"name": report.name,
-					"indexPage" : report.indexPage,
-					"sut": report.sut,
-					"imagePath": report.mainLoadGraphPath,
-
-				])
-			}
+			def result = reportDir.reports.collect { it.asMap() }
 			request.response.end(new JsonObject(["reports": result]).toString())
 		}
 
