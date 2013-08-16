@@ -1,5 +1,7 @@
 package thhi.vertx.mod
 
+import java.awt.Container;
+
 import org.vertx.groovy.core.http.HttpServer
 import org.vertx.groovy.core.http.RouteMatcher
 import org.vertx.groovy.platform.Verticle
@@ -49,11 +51,7 @@ public class ReportServerVerticle extends Verticle {
 			logDebug("Received request ${request.method} ${request.uri}")
 			def root = reportDir.rootDir.path - (File.separator + "reports")
 			def path = root + request.uri
-			if(new File(path).isFile()) {
-				request.response.sendFile(path)
-			} else {
-				request.response.end("Ressource not found")
-			}
+			request.response.sendFile(URLDecoder.decode(path, "UTF-8"))
 		}
 
 		rm.getWithRegEx(".*") { request ->

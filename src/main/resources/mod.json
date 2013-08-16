@@ -2,13 +2,11 @@
 	"main":"groovy:thhi.vertx.mod.StarterVerticle",
 	"auto-redeploy": true,
 	
-	// Mandatory fields
 	"description":"XLT Report Viewer",
 	"licenses": ["Creative Commons Attribution 3.0 Unported License"],
 	"author": "Thomas Hirsch",
 	
-	// Optional fields
 	"developers": [],
 	"keywords": [],
-	"homepage": ""
+	"homepage": "https://github.com/thirsch81/mod-xlt-report-viewer"
 }

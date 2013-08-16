@@ -3,7 +3,7 @@
 		"host": "localhost",
 		"port": 8080,
 		
-		"reportDir": "D:\\dev\\reports"
+		"reportDir": "D:\\Users\\Thomas\\Dev\\reports"
 	},
 	
 	"mongo_persistor": {
