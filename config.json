@@ -2,16 +2,10 @@
 	"server" :  {
 		"host": "localhost",
 		"port": 8080,
-		
-		"reportDir": "D:\\Users\\Thomas\\Dev\\reports"
+		"xltReportDir": "D:\\Users\\Thomas\\Dev\\reports"
 	},
 	
-	"mongo_persistor": {
-    	"address": "vertx.persistor",
-    	"host": "localhost",
-    	"port": 27017,
-    	"pool_size": 15,
-    	"db_name": "test_db",
-    	"fake": true
+	"reader": {
+		"xltReportDir": "D:\\Users\\Thomas\\Dev\\reports"
 	}
 }

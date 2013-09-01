@@ -2,7 +2,9 @@ package thhi.vertx.mod
 
 import java.util.regex.Pattern;
 
-class XltReport implements Comparable<XltReport> {
+import org.vertx.java.core.shareddata.Shareable;
+
+class XltReport implements Comparable<XltReport>, Shareable {
 
 	static final Pattern NAME_PATTERN = ~/^(\d{8}-\d{6}).*/
 	static final String DATE_FORMAT = "yyyyMMdd-HHmmss"
@@ -11,12 +13,12 @@ class XltReport implements Comparable<XltReport> {
 	String indexPage
 
 	String name
-	long startTime
+	Long startTime
 	String sut
 	String mainLoadGraphPath
-	long totalActions
-	long totalErrors
-	double errorRatio
+	Long totalActions
+	Long totalErrors
+	Double errorRatio
 
 	public XltReport(File rootDir) {
 		this.rootDir = rootDir
@@ -62,6 +64,7 @@ class XltReport implements Comparable<XltReport> {
 		def total = 0
 		def errors = 0
 		xml.actions.action.each {
+
 			total += it.count.text() as long
 			errors += it.errors.text() as long
 		}

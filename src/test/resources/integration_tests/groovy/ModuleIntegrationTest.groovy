@@ -12,23 +12,36 @@ import static org.vertx.testtools.VertxAssert.*
 // And import static the VertxTests script
 import org.vertx.groovy.testtools.VertxTests;
 
-// The test methods must being with "test"
+// Make sure you initialize
+VertxTests.initialize(this)
 
+// Provide config in case the module needs one
+def moduleTestConfig = [
+	"server" :  [
+		"host": "localhost",
+		"port": 8080,
+	],
+
+	"reader": [
+		"xltReportDir": "."
+	]
+]
+
+// Start the module for testing
+def moduleName = "thhi.vertx~xlt-report-viewer~0.5.0"
+//def moduleName = System.getProperty("vertx.modulename")
+container.deployModule(moduleName, moduleTestConfig, { result ->
+	assertTrue("${result.cause()}", result.succeeded)
+	assertNotNull("DeploymentID should not be null", result.result)
+	// If deployed correctly then Starter the tests!
+	VertxTests.startTests(this)
+})
+
+// The test methods must being with "test"
 def testSomething() {
 	container.logger.info("vertx is ${vertx.getClass().getName()}")
 	testComplete()
 }
-
-// Make sure you initialize
-VertxTests.initialize(this)
-
-container.deployModule("thhi.vertx~xlt-report-viewer~0.5.0", { result ->
-	// Deployment is asynchronous and this handler will be called when it's complete (or failed)
-	assertTrue("${result.cause()}", result.succeeded)
-	assertNotNull("deploymentID should not be null", result.result())
-	// If deployed correctly then Starter the tests!
-	VertxTests.startTests(this)
-})
 
 
 

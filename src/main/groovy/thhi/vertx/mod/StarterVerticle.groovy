@@ -1,20 +1,17 @@
 package thhi.vertx.mod
 
-import org.vertx.groovy.platform.Verticle
+import org.vertx.groovy.core.AsyncResult
 import org.vertx.java.core.json.JsonObject
+import thhi.vertx.base.VerticleBase
 
-public class StarterVerticle extends Verticle {
+class StarterVerticle extends VerticleBase {
 
 	def start() {
 
-		def serverConfig = container.config.server
+		def readerConfig = getMandatoryConfig("reader")
+		def serverConfig = getMandatoryConfig("server")
 		
-		container.deployWorkerVerticle("groovy:" + ReportServerVerticle.class.name, serverConfig) { result ->
-			if(result.succeeded) {
-				container.logger.info("Deployed ReportServerVerticle ${result.result}")
-			} else {
-				container.logger.info("Error when deploying ReportServerVerticle: ${result.cause()}")
-			}
-		}
+		deployGroovyWorkerVerticle(XltReportReaderVerticle.class.name, readerConfig)
+		deployGroovyVerticle(XltReportServerVerticle.class.name, serverConfig)
 	}
 }
