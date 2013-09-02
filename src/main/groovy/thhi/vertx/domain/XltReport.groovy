@@ -1,5 +1,6 @@
-package thhi.vertx.mod
+package thhi.vertx.domain
 
+import java.text.SimpleDateFormat
 import java.util.regex.Pattern;
 
 import org.vertx.java.core.shareddata.Shareable;
@@ -20,22 +21,18 @@ class XltReport implements Comparable<XltReport>, Shareable {
 	Long totalErrors
 	Double errorRatio
 
-	public XltReport(File rootDir) {
-		this.rootDir = rootDir
-		this.name = rootDir.name
-		this.indexPage = "${name}/index.html"
-		this.mainLoadGraphPath = "${name}/charts/HitsPerSecond.png"
-		this.startTime = getStartTime(name)
-		this.sut = getSut(rootDir)
-		def stats = getStatistics()
-		this.totalActions = stats.actions
-		this.totalErrors = stats.errors
-		this.errorRatio = totalErrors / totalActions
-	}
-
-	public Map asMap() {
-		this.class.declaredFields.findAll { !it.synthetic }.collectEntries {
-			[ (it.name): this."$it.name" ]
+	public XltReport(File dir) {
+		this.with {
+			rootDir = dir
+			name = rootDir.name
+			indexPage = "${name}/index.html"
+			mainLoadGraphPath = "${name}/charts/HitsPerSecond.png"
+			startTime = getStartTime(name)
+			sut = getSut(rootDir)
+			def stats = getStatistics()
+			totalActions = stats.actions
+			totalErrors = stats.errors
+			errorRatio = totalErrors / totalActions
 		}
 	}
 
@@ -44,10 +41,16 @@ class XltReport implements Comparable<XltReport>, Shareable {
 		other.startTime <=> this.startTime
 	}
 
-	long getStartTime(name) {
+	public Map asMap() {
+		this.class.declaredFields.findAll { !it.synthetic }.collectEntries {
+			[ (it.name): this."$it.name" ]
+		}
+	}
+
+	Long getStartTime(name) {
 		def matcher = NAME_PATTERN.matcher(name)
 		if(matcher.matches()) {
-			return new Date().parse(DATE_FORMAT, matcher[0][1]).time
+			return new SimpleDateFormat(DATE_FORMAT).parse(matcher[0][1]).time
 		}
 	}
 

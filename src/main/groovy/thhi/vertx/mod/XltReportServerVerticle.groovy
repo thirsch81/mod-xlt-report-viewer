@@ -6,9 +6,9 @@ import org.vertx.groovy.core.http.RouteMatcher
 import org.vertx.java.core.json.JsonObject
 import org.vertx.java.core.shareddata.ConcurrentSharedMap;
 
-import thhi.vertx.base.VerticleBase
+import thhi.vertx.base.GroovyVerticleBase
 
-class XltReportServerVerticle extends VerticleBase {
+class XltReportServerVerticle extends GroovyVerticleBase {
 
 	File xltReportDir
 	String hostname

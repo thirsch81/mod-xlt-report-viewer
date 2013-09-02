@@ -6,7 +6,7 @@ import org.vertx.groovy.platform.Verticle
 import org.vertx.java.core.Future
 import org.vertx.java.core.shareddata.ConcurrentSharedMap;
 
-abstract class VerticleBase extends Verticle {
+abstract class GroovyVerticleBase extends Verticle {
 
 	protected Map actionHandlers = [:]
 
@@ -31,7 +31,7 @@ abstract class VerticleBase extends Verticle {
 	}
 
 	void sendUnknownAction(Message message, expected = []) {
-		def error =  "Unknown action ${message.body.action}, known actions are $expected" as String
+		def error = "Unknown action ${message.body.action}, known actions are $expected" as String
 		replyError(message, error)
 	}
 
