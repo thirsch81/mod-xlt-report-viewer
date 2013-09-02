@@ -10,12 +10,17 @@ abstract class VerticleBase extends Verticle {
 
 	protected Map actionHandlers = [:]
 
-	def handleActions = { Message message ->
+	def registerActionHandlers(String address, Map handlers) {
+		actionHandlers.put(address, handlers)
+		vertx.eventBus.registerHandler(address, handleActions.curry(address))
+	}
+	
+	Closure handleActions = { String address, Message message ->
 
 		def action = getAction(message)
-		def knownActions = actionHandlers.keySet()
+		def knownActions = actionHandlers[address].keySet()
 		if(knownActions.contains(action)) {
-			actionHandlers[action](message)
+			actionHandlers[address][action](message)
 		} else {
 			sendUnknownAction(message, knownActions)
 		}

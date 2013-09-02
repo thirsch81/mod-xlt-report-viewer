@@ -19,12 +19,12 @@ class XltReportReaderVerticle extends VerticleBase {
 
 		xltReportDir = new File(getMandatoryConfig("xltReportDir"))
 
-		actionHandlers = [
+		def actionHandlers = [
 			"read": handleRead,
 			"update": handleUpdate
 		]
-
-		registerHandler("xlt-report-reader", handleActions)
+		
+		registerActionHandlers("xlt-report-reader", actionHandlers)
 
 		readAllReports()
 	}
@@ -46,8 +46,6 @@ class XltReportReaderVerticle extends VerticleBase {
 			readDirectory(xltReportDir.path, { files ->
 				def newReports = getDirectoryList(files)*.name
 				def oldReports = xltReports().collect { it.key }
-				println oldReports - newReports
-				println newReports - oldReports
 				(oldReports - newReports).each {
 					xltReports().remove(it)
 				}
