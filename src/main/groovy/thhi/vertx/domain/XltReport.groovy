@@ -1,6 +1,5 @@
 package thhi.vertx.domain
 
-import java.lang.reflect.Field
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern;
 
@@ -23,6 +22,7 @@ abstract class XltReport {
 	public static Map read(File rootDir) {
 
 		def name = rootDir.name
+		
 		def stats = parseTestreportXml(rootDir)
 
 		// extend this map to include more data
@@ -46,6 +46,7 @@ abstract class XltReport {
 	}
 
 	// main helper method
+	// extend this to include more data
 	private static Map parseTestreportXml(File rootDir) {
 
 		def xml = new XmlSlurper().parse(new File(rootDir.path, "testreport.xml"))
