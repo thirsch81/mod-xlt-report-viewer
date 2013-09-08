@@ -23,11 +23,12 @@ abstract class XltReport {
 
 		def name = reportRootDir.name
 		def rootPath = serverRoot ? "${serverRoot}/" : ""
-		
-		def stats = parseTestreportXml(reportRootDir)
+
+		// include more statistics below
+		def statistics = parseTestreportXml(reportRootDir)
 
 		// extend this map to include more data
-		return [
+		def reportItem = statistics + [
 
 			name : name,
 
@@ -37,17 +38,13 @@ abstract class XltReport {
 
 			startTime : getStartTime(name),
 
-			sut : getSut(reportRootDir),
+			sut : getSut(reportRootDir)
 
-			totalActions : stats.actions,
-			totalErrors : stats.errors,
-			errorRatio :  stats.errorRatio
-
-		] as ReportMap
+		]
+		return reportItem as ReportMap
 	}
 
-	// main helper method
-	// extend this to include more data
+	// extend this helper method to include more statistics
 	private static Map parseTestreportXml(File rootDir) {
 
 		def xml = new XmlSlurper().parse(new File(rootDir.path, "testreport.xml"))
@@ -62,8 +59,8 @@ abstract class XltReport {
 		}
 
 		return [
-			actions: total,
-			errors: errors,
+			totalActions: total,
+			totalErrors: errors,
 			errorRatio : errors / total
 		]
 	}

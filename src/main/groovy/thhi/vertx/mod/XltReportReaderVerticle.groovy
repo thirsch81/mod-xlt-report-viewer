@@ -36,7 +36,7 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 		def name = getMandatoryObject("name", message)
 		if(name) {
 			newXltReport(new File(xltReportDir, name))
-			replyOk(message, getSharedReports().find { it.name == name() })
+			replyOk(message, getSharedReports().find { it.name == name })
 		}
 	}
 

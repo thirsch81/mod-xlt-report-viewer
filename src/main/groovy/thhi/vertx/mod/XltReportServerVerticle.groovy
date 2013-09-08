@@ -63,6 +63,18 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 			request.response.end(response)
 		}
 
+		// read a single XLT reports
+		rm.getWithRegEx(/\/reports\/read/) { HttpServerRequest request ->
+			logDebug("Received request ${request.method} ${request.uri}")
+			sendMessage("xlt-report-reader", ["action": "read", name: request.params.name], { success ->
+				request.response.end(success.body.toString())
+			}, { error ->
+				request.response
+						.setStatusCode(500)
+						.end(error.body.message.toString())
+			})
+		}
+
 		// serve actual XLT reports
 		rm.getWithRegEx(/\/reports\/\d{8}-\d{6}.*/) { HttpServerRequest request ->
 			logDebug("Received request ${request.method} ${request.uri}")
