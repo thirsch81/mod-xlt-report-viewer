@@ -47,9 +47,12 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 			def newReports = getDirectoryList(files)*.name
 			def oldReports = getSharedReports().collect { it.name }
 			
-			getSharedReports().removeAll(getSharedReports().findAll { (oldReports - newReports).contains(it.name) })  
+			def reportsToRemove = getSharedReports().findAll { (oldReports - newReports).contains(it.name) }
+			logDebug("Removing reports ${reportsToRemove*.name}")
+			getSharedReports().removeAll(reportsToRemove)  
 			
 			(newReports - oldReports).each {
+				logDebug("Adding new report $it")
 				newXltReport(new File(xltReportDir, it))
 			}
 			
@@ -76,7 +79,7 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 
 	def newXltReport(File directory) {
 		try {
-			getSharedReports().add(XltReport.read(directory))
+			getSharedReports().add(XltReport.read(directory, xltReportDir.name))
 		} catch(Exception e) {
 			logError("Error when reading XLT report dir ${directory.name}" as String, e)
 		}

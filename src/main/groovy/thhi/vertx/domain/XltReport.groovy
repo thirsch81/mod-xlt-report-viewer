@@ -19,24 +19,27 @@ abstract class XltReport {
 	static final Pattern NAME_PATTERN = ~/^(\d{8}-\d{6}).*/
 	static final String DATE_FORMAT = "yyyyMMdd-HHmmss"
 
-	public static Map read(File rootDir) {
+	public static Map read(File reportRootDir, serverRoot = "") {
 
-		def name = rootDir.name
+		def name = reportRootDir.name
+		def rootPath = serverRoot ? "${serverRoot}/" : ""
 		
-		def stats = parseTestreportXml(rootDir)
+		println rootPath
+		
+		def stats = parseTestreportXml(reportRootDir)
 
 		// extend this map to include more data
 		return [
 
 			name : name,
 
-			indexPage : "${name}/index.html" as String,
+			indexPage : "${rootPath}${name}/index.html" as String,
 
-			mainLoadGraphPath : "${name}/charts/HitsPerSecond.png" as String,
+			mainLoadGraphPath : "${rootPath}${name}/charts/HitsPerSecond.png" as String,
 
 			startTime : getStartTime(name),
 
-			sut : getSut(rootDir),
+			sut : getSut(reportRootDir),
 
 			totalActions : stats.actions,
 			totalErrors : stats.errors,

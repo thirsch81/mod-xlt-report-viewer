@@ -3,8 +3,8 @@ function Main($scope, $location, $log, xltReports) {
 	$scope.rowCollection = [];
 	$scope.columnCollection = [ {
 		label : "Report",
-		map : "name", 
-		cellTemplateUrl: "/reportLink.html"
+		map : "name",
+		cellTemplateUrl : "/reportLink.html"
 	}, {
 		label : "Start Time",
 		map : "startTime",
@@ -12,24 +12,23 @@ function Main($scope, $location, $log, xltReports) {
 			return new Date(value).toLocaleString();
 		}
 	}, {
-		label : "TotalActions",
-		map : "totalActions"
-	}, {
 		label : "SUT",
 		map : "sut"
 	}, {
 		label : "Main Load Graph",
 		map : "mainLoadGraphPath",
-		cellTemplateUrl: "/loadGraph.html"
+		cellTemplateUrl : "/loadGraph.html"
 	}, {
-		
-		
+		label : "TotalActions",
+		map : "totalActions"
+	}, {
+
 		label : "Errors",
-		map : "totalErrors", 
-		cellClass : "error-count" 
+		map : "totalErrors",
+		cellClass : "error-count"
 	}, {
 		label : "Error Ratio",
-		map : "errorRatio", 
+		map : "errorRatio",
 		cellClass : "error-count"
 	} ];
 
