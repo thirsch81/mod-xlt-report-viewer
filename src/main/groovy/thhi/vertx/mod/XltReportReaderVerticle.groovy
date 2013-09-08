@@ -3,6 +3,7 @@ package thhi.vertx.mod
 import org.vertx.groovy.core.AsyncResult
 import org.vertx.groovy.core.eventbus.Message
 import org.vertx.groovy.core.file.AsyncFile
+import org.vertx.java.core.json.JsonObject
 import org.vertx.java.core.shareddata.ConcurrentSharedMap;
 
 import thhi.vertx.base.GroovyVerticleBase
@@ -12,8 +13,8 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 
 	File xltReportDir
 
-	ConcurrentSharedMap xltReports() {
-		getSharedMap("xltReports")
+	Set getSharedReports() {
+		getSharedSet("xltReports")
 	}
 
 	def start () {
@@ -35,21 +36,25 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 		def name = getMandatoryObject("name", message)
 		if(name) {
 			newXltReport(new File(xltReportDir, name))
-			replyOk(message, xltReports()[name])
+			replyOk(message, getSharedReports().find { it.name == name() })
 		}
 	}
 
 	def handleUpdate = { Message message ->
+		
 		readDirectory(xltReportDir.path, { files ->
+			
 			def newReports = getDirectoryList(files)*.name
-			def oldReports = xltReports().collect { it.key }
-			(oldReports - newReports).each {
-				xltReports().remove(it)
-			}
+			def oldReports = getSharedReports().collect { it.name }
+			
+			getSharedReports().removeAll(getSharedReports().findAll { (oldReports - newReports).contains(it.name) })  
+			
 			(newReports - oldReports).each {
 				newXltReport(new File(xltReportDir, it))
 			}
+			
 			replyOk(message)
+			
 		}, { cause ->
 			replyError(message, "Couldn't read XLT report dir", cause)
 		})
@@ -71,8 +76,7 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 
 	def newXltReport(File directory) {
 		try {
-			XltReport report = new XltReport(directory)
-			xltReports().put(directory.name, report)
+			getSharedReports().add(XltReport.read(directory))
 		} catch(Exception e) {
 			logError("Error when reading XLT report dir ${directory.name}" as String, e)
 		}

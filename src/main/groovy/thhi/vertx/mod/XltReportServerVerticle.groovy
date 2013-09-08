@@ -3,6 +3,7 @@ package thhi.vertx.mod
 import org.vertx.groovy.core.http.HttpServer
 import org.vertx.groovy.core.http.HttpServerRequest;
 import org.vertx.groovy.core.http.RouteMatcher
+import org.vertx.java.core.json.JsonArray
 import org.vertx.java.core.json.JsonObject
 import org.vertx.java.core.shareddata.ConcurrentSharedMap;
 
@@ -14,8 +15,8 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 	String hostname
 	Integer port
 
-	ConcurrentSharedMap xltReports() {
-		getSharedMap("xltReports")
+	Set getSharedReports() {
+		getSharedSet("xltReports")
 	}
 
 	def start () {
@@ -40,7 +41,7 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 		// line break separated list of reports
 		rm.get("/list") { HttpServerRequest request ->
 			logDebug "Received request ${request.method} ${request.uri}"
-			request.response.end(xltReports().keySet().sort().join("\n"))
+			request.response.end(getSharedReports().collect { it.name }.sort().join("\n"))
 		}
 
 		// update XLT directory
@@ -58,8 +59,8 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 		// JSON object containing all reports
 		rm.get("/reports/list") { HttpServerRequest request ->
 			logDebug("Received request ${request.method} ${request.uri}")
-			def result = xltReports().collect { it.value.asMap() }
-			request.response.end(new JsonObject(["reports": result]).toString())
+			def response = new JsonObject().putArray("reports", new JsonArray(getSharedReports() as List)).encode()
+			request.response.end(response)
 		}
 
 		// serve actual XLT reports

@@ -1,76 +1,83 @@
 package thhi.vertx.domain
 
+import java.lang.reflect.Field
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern;
 
 import org.vertx.java.core.shareddata.Shareable;
 
-class XltReport implements Comparable<XltReport>, Shareable {
+/**
+ * 
+ * @author Thomas Hirsch
+ *
+ */
+abstract class XltReport {
+
+	// implement the marker interface
+	class ReportMap extends HashMap implements Shareable {
+	}
 
 	static final Pattern NAME_PATTERN = ~/^(\d{8}-\d{6}).*/
 	static final String DATE_FORMAT = "yyyyMMdd-HHmmss"
 
-	File rootDir
-	String indexPage
+	public static Map read(File rootDir) {
 
-	String name
-	Long startTime
-	String sut
-	String mainLoadGraphPath
-	Long totalActions
-	Long totalErrors
-	Double errorRatio
+		def name = rootDir.name
+		def stats = parseTestreportXml(rootDir)
 
-	public XltReport(File dir) {
-		this.with {
-			rootDir = dir
-			name = rootDir.name
-			indexPage = "${name}/index.html"
-			mainLoadGraphPath = "${name}/charts/HitsPerSecond.png"
-			startTime = getStartTime(name)
-			sut = getSut(rootDir)
-			def stats = getStatistics()
-			totalActions = stats.actions
-			totalErrors = stats.errors
-			errorRatio = totalErrors / totalActions
+		// extend this map to include more data
+		return [
+
+			name : name,
+
+			indexPage : "${name}/index.html" as String,
+
+			mainLoadGraphPath : "${name}/charts/HitsPerSecond.png" as String,
+
+			startTime : getStartTime(name),
+
+			sut : getSut(rootDir),
+
+			totalActions : stats.actions,
+			totalErrors : stats.errors,
+			errorRatio :  stats.errorRatio
+
+		] as ReportMap
+	}
+
+	// main helper method
+	private static Map parseTestreportXml(File rootDir) {
+
+		def xml = new XmlSlurper().parse(new File(rootDir.path, "testreport.xml"))
+
+		def total = 0
+		def errors = 0
+
+		xml.actions.action.each {
+
+			total += it.count.text() as long
+			errors += it.errors.text() as long
 		}
+
+		return [
+			actions: total,
+			errors: errors,
+			errorRatio : errors / total
+		]
 	}
 
-	int compareTo(XltReport other) {
-		// reverse order
-		other.startTime <=> this.startTime
-	}
-
-	public Map asMap() {
-		this.class.declaredFields.findAll { !it.synthetic }.collectEntries {
-			[ (it.name): this."$it.name" ]
-		}
-	}
-
-	Long getStartTime(name) {
+	private static Long getStartTime(name) {
 		def matcher = NAME_PATTERN.matcher(name)
 		if(matcher.matches()) {
 			return new SimpleDateFormat(DATE_FORMAT).parse(matcher[0][1]).time
 		}
 	}
 
-	String getSut(File rootDir) {
-		def result = ""
+	private static String getSut(File rootDir) {
+		def result = "unknown"
 		rootDir.eachFileMatch(~/.*json/) {
 			result = it.name - ".json"
 		}
-		result.size() < 4 ? result.toUpperCase() : result
-	}
-
-	Map getStatistics() {
-		def xml = new XmlSlurper().parse(new File(rootDir.path, "testreport.xml"))
-		def total = 0
-		def errors = 0
-		xml.actions.action.each {
-
-			total += it.count.text() as long
-			errors += it.errors.text() as long
-		}
-		[actions: total, errors: errors]
+		return result.size() < 4 ? result.toUpperCase() : result
 	}
 }

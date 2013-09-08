@@ -14,7 +14,7 @@ abstract class GroovyVerticleBase extends Verticle {
 		actionHandlers.put(address, handlers)
 		vertx.eventBus.registerHandler(address, handleActions.curry(address))
 	}
-	
+
 	Closure handleActions = { String address, Message message ->
 
 		def action = getAction(message)
@@ -83,6 +83,10 @@ abstract class GroovyVerticleBase extends Verticle {
 
 	ConcurrentSharedMap getSharedMap(name) {
 		vertx.sharedData.getMap(name)
+	}
+
+	Set getSharedSet(name) {
+		vertx.sharedData.getSet(name)
 	}
 
 	void logInfo(msg, err = null) {

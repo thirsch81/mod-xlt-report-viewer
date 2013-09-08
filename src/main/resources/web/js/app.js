@@ -1,4 +1,4 @@
-var app = angular.module("xltReportViewer", []);
+var app = angular.module("xltReportViewer", ["smartTable.table"]);
 
 app.config(["$routeProvider", function($routeProvider) {
 }]);

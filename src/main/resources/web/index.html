@@ -6,34 +6,16 @@
 <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap.min.css">
 <link rel="stylesheet" type="text/css" href="http://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/2.3.2/css/bootstrap-responsive.min.css">
 <link rel="stylesheet" type="text/css" href="css/main.css">
-<script src="http://code.jquery.com/jquery-1.10.2.min.js"></script>
 <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.1.5/angular.min.js"></script>
-<script src="http://cdnjs.cloudflare.com/ajax/libs/angular-ui/0.4.0/angular-ui.min.js"></script>
-<script src="http://cdn.sockjs.org/sockjs-0.3.4.min.js"></script>
-<script src="js/vertxbus.min.js"></script>
+<script src="js/smart-table.min.js"></script>
 </head>
 <body>
 	<div x-ng-controller="Main" class="container">
 		<div class="page-header">
 			<h3>XLT Report Viewer</h3>
 		</div>
-		<a href="/reload">Refresh reports</a>
-		<div class="v25"></div>
 		<div>
-			<table class="table table-bordered table-condensed">
-				<tr>
-					<th x-ng-repeat='header in ["Name", "SUT", "Start time", "Main Load Graph", "Total Actions", "Total Errors", "Error %"]'>{{header}}</th>
-				</tr>
-				<tr x-ng-repeat="report in xltReports">
-					<td class="text-center"><a href="/reports/{{report.indexPage}}">{{report.name}}</a></td>
-					<td class="text-center">{{report.sut}}</td>
-					<td class="text-center">{{startTime(report)}}</td>
-					<td class="text-center"><img class="loadgraph" x-ng-src="/reports/{{report.mainLoadGraphPath}}"></img></td>
-					<td class="text-center">{{report.totalActions}}</td>
-					<td class="error-count text-center">{{report.totalErrors}}</td>
-					<td class="error-count text-center">{{report.errorRatio | number: 3}}</td>
-				</tr>
-			</table>
+			<smart-table class="table table-striped" table-title="XLT Reports" rows="rows" config="globalConfig"></smart-table>
 		</div>
 	</div>
 	<script src="js/app.js"></script>
