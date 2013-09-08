@@ -35,8 +35,7 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 
 		def name = getMandatoryObject("name", message)
 		if(name) {
-			newXltReport(new File(xltReportDir, name))
-			replyOk(message, getSharedReports().find { it.name == name })
+			readXltReport(name, message)
 		}
 	}
 
@@ -55,7 +54,7 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 
 			(newReports - oldReports).each {
 				logDebug("Adding new report $it")
-				newXltReport(new File(xltReportDir, it))
+				readXltReport(it)
 			}
 
 			replyOk(message)
@@ -78,11 +77,27 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 		})
 	}
 
+	def readXltReport(name, message = null) {
+		try {
+			newXltReport(new File(xltReportDir, name))
+			if(message) {
+				replyOk(message, getSharedReports().find { it.name == name })
+			}
+		} catch (Exception e) {
+			def errorMsg = "Error when reading XLT report dir ${name}" as String
+			if(message) {
+				replyError(message, errorMsg, e)
+			} else {
+				logError(errorMsg, e)
+			}
+		}
+	}
+
 	def newXltReport(File directory) {
 		try {
 			getSharedReports().add(XltReport.read(directory, xltReportDir.name))
 		} catch(Exception e) {
-			logError("Error when reading XLT report dir ${directory.name}" as String, e)
+			logError("Error when processing XLT report dir ${directory.name}" as String, e)
 		}
 	}
 }
