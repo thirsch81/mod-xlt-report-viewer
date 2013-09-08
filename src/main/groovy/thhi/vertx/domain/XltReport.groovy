@@ -77,6 +77,6 @@ abstract class XltReport {
 		rootDir.eachFileMatch(~/.*json/) {
 			result = it.name - ".json"
 		}
-		return result.size() < 4 ? result.toUpperCase() : result
+		return result
 	}
 }

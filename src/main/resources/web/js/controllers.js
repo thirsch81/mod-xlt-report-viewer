@@ -1,6 +1,7 @@
 function Main($scope, $location, $log, xltReports) {
 
 	$scope.rowCollection = [];
+
 	$scope.columnCollection = [ {
 		label : "Report",
 		map : "name",
@@ -13,7 +14,10 @@ function Main($scope, $location, $log, xltReports) {
 		}
 	}, {
 		label : "SUT",
-		map : "sut"
+		map : "sut",
+		formatFunction : function(value, formatParameter) {
+			return value.length < 5 ? value.toUpperCase() : value;
+		}
 	}, {
 		label : "Main Load Graph",
 		map : "mainLoadGraphPath",
@@ -29,7 +33,10 @@ function Main($scope, $location, $log, xltReports) {
 	}, {
 		label : "Error Ratio",
 		map : "errorRatio",
-		cellClass : "error-count"
+		cellClass : "error-count",
+		formatFunction : function(value, formatParameter) {
+			return (value * 100).toFixed(2) + "%";
+		}
 	} ];
 
 	$scope.tableConfig = {
