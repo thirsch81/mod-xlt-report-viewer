@@ -24,8 +24,6 @@ abstract class XltReport {
 		def name = reportRootDir.name
 		def rootPath = serverRoot ? "${serverRoot}/" : ""
 		
-		println rootPath
-		
 		def stats = parseTestreportXml(reportRootDir)
 
 		// extend this map to include more data

@@ -41,23 +41,24 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 	}
 
 	def handleUpdate = { Message message ->
-		
+
 		readDirectory(xltReportDir.path, { files ->
-			
+
 			def newReports = getDirectoryList(files)*.name
 			def oldReports = getSharedReports().collect { it.name }
-			
+
 			def reportsToRemove = getSharedReports().findAll { (oldReports - newReports).contains(it.name) }
-			logDebug("Removing reports ${reportsToRemove*.name}")
-			getSharedReports().removeAll(reportsToRemove)  
-			
+			if(reportsToRemove) {
+				logDebug("Removing reports ${reportsToRemove*.name}")
+				getSharedReports().removeAll(reportsToRemove)
+			}
+
 			(newReports - oldReports).each {
 				logDebug("Adding new report $it")
 				newXltReport(new File(xltReportDir, it))
 			}
-			
+
 			replyOk(message)
-			
 		}, { cause ->
 			replyError(message, "Couldn't read XLT report dir", cause)
 		})
