@@ -99,7 +99,8 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 			if(present) {
 				getSharedReports().remove(present)
 			}
-			getSharedReports().add(XltReport.read(directory, xltReportDir.name))
+			def serverRootPath = "/${xltReportDir.name}"
+			getSharedReports().add(XltReport.read(directory, serverRootPath))
 		} catch(Exception e) {
 			logError("Error when processing XLT report dir ${directory.name}" as String, e)
 		}

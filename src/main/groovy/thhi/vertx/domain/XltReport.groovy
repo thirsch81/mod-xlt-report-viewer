@@ -22,29 +22,30 @@ abstract class XltReport {
 	public static Map read(File reportRootDir, serverRoot = "") {
 
 		def name = reportRootDir.name
-		def rootPath = serverRoot ? "${serverRoot}/" : ""
+		def rootPath = serverRoot ?: ""
 
-		// include more statistics below
+		// either include more statistics below...
 		def statistics = parseTestreportXml(reportRootDir)
 
-		// extend this map to include more data
-		def reportItem = statistics + [
+		// ...or extend this map to include more data
+		return statistics + [
 
 			name : name,
 
-			indexPage : "${rootPath}${name}/index.html" as String,
+			indexPage : "${rootPath}/${name}/index.html" as String,
+			
+			testreportXml : "${rootPath}/${name}/testreport.xml" as String,
 
-			mainLoadGraphPath : "${rootPath}${name}/charts/HitsPerSecond.png" as String,
+			mainLoadGraphPath : "${rootPath}/${name}/charts/HitsPerSecond.png" as String,
 
 			startTime : getStartTime(name),
 
 			sut : getSut(reportRootDir)
 
-		]
-		return reportItem as ReportMap
+		] as ReportMap
 	}
 
-	// extend this helper method to include more statistics
+	// extend this helper method
 	private static Map parseTestreportXml(File rootDir) {
 
 		def xml = new XmlSlurper().parse(new File(rootDir.path, "testreport.xml"))
@@ -56,13 +57,23 @@ abstract class XltReport {
 
 			total += it.count.text() as long
 			errors += it.errors.text() as long
-			
+		}
+		
+		// parse the otto fragment
+		Map otto = [:]
+		try {
+			xml.otto.childNodes().each {
+				otto[it.name()] = it.text()
+			}
+		} catch (Exception e) {
+			// ignore
 		}
 
 		return [
-			totalActions: total,
+			totalActions : total,
 			totalErrors: errors,
-			errorRatio : errors / total
+			errorRatio : errors / total,
+			otto : otto
 		]
 	}
 
