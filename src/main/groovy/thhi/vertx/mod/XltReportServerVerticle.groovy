@@ -84,7 +84,9 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 
 			// cache stuff
 			request.response.putHeader("Cache-Control", "public")
-			request.response.sendFile(URLDecoder.decode(path, "UTF-8"))
+			def filename = URLDecoder.decode(path, "UTF-8")
+			logDebug("Attempting to serve file ${filename}")
+			request.response.sendFile(filename)
 		}
 
 		// everything else from web directory
