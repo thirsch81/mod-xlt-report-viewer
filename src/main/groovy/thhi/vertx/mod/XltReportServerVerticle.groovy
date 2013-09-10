@@ -80,7 +80,7 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 			logDebug("Received request ${request.method} ${request.uri}")
 
 			// use parent file, since /reports is part of request URI
-			def path = xltReportDir.parentFile.path + request.uri
+			def path = xltReportDir.path + (request.uri - "/reports")
 
 			// cache stuff
 			request.response.putHeader("Cache-Control", "public")

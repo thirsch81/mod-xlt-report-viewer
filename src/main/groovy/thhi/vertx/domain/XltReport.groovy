@@ -56,6 +56,7 @@ abstract class XltReport {
 
 			total += it.count.text() as long
 			errors += it.errors.text() as long
+			
 		}
 
 		return [
