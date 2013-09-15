@@ -42,6 +42,10 @@ abstract class GroovyVerticleBase extends Verticle {
 		}
 		return val
 	}
+	
+	def getOptionalObject(field, Message message) {
+		return message.body[field]
+	}
 
 	def getMandatoryConfig(field) {
 		def val = container.config.get(field)

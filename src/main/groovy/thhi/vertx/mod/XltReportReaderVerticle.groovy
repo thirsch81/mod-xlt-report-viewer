@@ -34,8 +34,11 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 	def handleRead = { Message message ->
 
 		def name = getMandatoryObject("name", message)
-		if(name) {
+		def forceRead = getOptionalObject("forceRead", message)
+		if(forceRead || !isReportCached(name)) {
 			readXltReport(name, message)
+		} else {
+			replyOk(message, findCachedReports([name]))
 		}
 	}
 
@@ -46,10 +49,10 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 			def newReports = getDirectoryList(files)*.name
 			def oldReports = getSharedReports().collect { it.name }
 
-			def reportsToRemove = getSharedReports().findAll { (oldReports - newReports).contains(it.name) }
+			def reportsToRemove = findCachedReports(oldReports - newReports)
 			if(reportsToRemove) {
 				logDebug("Removing reports ${reportsToRemove*.name}")
-				getSharedReports().removeAll(reportsToRemove)
+				removeCachedReports(reportsToRemove)
 			}
 
 			(newReports - oldReports).each {
@@ -81,7 +84,7 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 		try {
 			newXltReport(new File(xltReportDir, name))
 			if(message) {
-				replyOk(message, getSharedReports().find { it.name == name })
+				replyOk(message, findCachedReports([name]))
 			}
 		} catch (Exception e) {
 			def errorMsg = "Error when reading XLT report dir ${name}" as String
@@ -95,14 +98,29 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 
 	def newXltReport(File directory) {
 		try {
-			def present = getSharedReports().find { directory.name == it.name }
-			if(present) {
-				getSharedReports().remove(present)
+			if(isReportCached(directory.name)) {
+				removeCachedReports([directory.name])
 			}
-			def serverRootPath = "/${xltReportDir.name}"
-			getSharedReports().add(XltReport.read(directory, serverRootPath))
+			cacheReport(directory)
 		} catch(Exception e) {
 			logError("Error when processing XLT report dir ${directory.name}" as String, e)
 		}
+	}
+
+	def findCachedReports(List names) {
+		getSharedReports().findAll { it.name in names }
+	}
+
+	def isReportCached(name) {
+		findCachedReports([name]) as Boolean
+	}
+
+	def cacheReport(directory) {
+		def serverRootPath = "/${xltReportDir.name}"
+		getSharedReports().add(XltReport.read(directory, serverRootPath))
+	}
+
+	def removeCachedReports(List names) {
+		getSharedReports().remove(findCachedReports(names))
 	}
 }

@@ -57,22 +57,18 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 		}
 
 		// JSON object containing all reports
-		rm.get("/reports/list") { HttpServerRequest request ->
+		rm.get("/reports") { HttpServerRequest request ->
 			logDebug("Received request ${request.method} ${request.uri}")
 			def response = new JsonObject().putArray("reports", new JsonArray(getSharedReports() as List)).encode()
 			request.response.end(response)
 		}
 
-		// read a single XLT reports
-		rm.getWithRegEx(/\/reports\/read/) { HttpServerRequest request ->
+		// serve XLT reports as JSON or HTML
+		rm.get("/reports/:name") { HttpServerRequest request ->
+
 			logDebug("Received request ${request.method} ${request.uri}")
-			sendMessage("xlt-report-reader", ["action": "read", name: request.params.name], { success ->
-				request.response.end(success.body.toString())
-			}, { error ->
-				request.response
-						.setStatusCode(500)
-						.end(error.body.message.toString())
-			})
+
+			serveSingleReportAsJson(request)
 		}
 
 		// serve actual XLT reports
@@ -98,5 +94,19 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 		HttpServer server = vertx.createHttpServer()
 		server.requestHandler(rm.asClosure())
 		server.listen(port, hostname)
+	}
+
+	def serveSingleReportAsJson(HttpServerRequest request) {
+		def message = ["action": "read", name: request.params.name]
+		if(request.params["read"]) {
+			message.put("forceRead", true)
+		}
+		sendMessage("xlt-report-reader", , { success ->
+			request.response.end(success.body.toString())
+		}, { error ->
+			request.response
+					.setStatusCode(500)
+					.end(error.body.message.toString())
+		})
 	}
 }
