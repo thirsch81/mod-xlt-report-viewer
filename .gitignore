@@ -19,3 +19,4 @@ test-tmp
 *.class
 mods
 vertx.log*
+reports

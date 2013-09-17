@@ -63,7 +63,7 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 			request.response.end(response)
 		}
 
-		// serve XLT reports as JSON or HTML
+		// serve XLT reports as JSON
 		rm.get("/reports/:name") { HttpServerRequest request ->
 
 			logDebug("Received request ${request.method} ${request.uri}")

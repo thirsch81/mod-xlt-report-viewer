@@ -9,9 +9,26 @@ import thhi.vertx.mod.StarterVerticle
 import thhi.vertx.mod.XltReportReaderVerticle
 import thhi.vertx.mod.XltReportServerVerticle
 
+public abstract class TestConfig {
+
+	static def reader = [
+		"xltReportDir" : "src/test/resources/reports"
+	]
+
+	static def server =  [
+		"host" : "localhost",
+		"port" : 8080,
+		"xltReportDir" : "src/test/resources/reports"
+	]
+
+	static def module = [
+		"server" :  server,
+		"reader": reader
+	]
+}
 
 def testDeployXltReportReader() {
-	container.deployVerticle("groovy:" + XltReportReaderVerticle.class.name, ["xltReportDir" : "."]) { result ->
+	container.deployVerticle("groovy:" + XltReportReaderVerticle.class.name, TestConfig.reader) { result ->
 		assertNotNull(result)
 		assertTrue("${result.cause()}", result.succeeded)
 		testComplete()
@@ -19,7 +36,7 @@ def testDeployXltReportReader() {
 }
 
 def testXltReportReaderHandleUnknownAction() {
-	container.deployVerticle("groovy:" + XltReportReaderVerticle.class.name, ["xltReportDir" : "."]) { result ->
+	container.deployVerticle("groovy:" + XltReportReaderVerticle.class.name, TestConfig.reader) { result ->
 		assertNotNull(result)
 		assertTrue("${result.cause()}", result.succeeded)
 		vertx.eventBus.send("xlt-report-reader", ["action" : "unknown"]) { reply ->
@@ -32,7 +49,8 @@ def testXltReportReaderHandleUnknownAction() {
 }
 
 def testDeployXltReportServer() {
-	container.deployVerticle("groovy:" + XltReportServerVerticle.class.name, ["host": "localhost", "port": 8080, "xltReportDir" : "."]) { result ->
+
+	container.deployVerticle("groovy:" + XltReportServerVerticle.class.name, TestConfig.server) { result ->
 		assertNotNull(result)
 		assertTrue("${result.cause()}", result.succeeded)
 		testComplete()
@@ -41,18 +59,7 @@ def testDeployXltReportServer() {
 
 def testDeployStarter() {
 
-	def moduleTestConfig = [
-		"server" :  [
-			"host": "localhost",
-			"port": 8080,
-		],
-
-		"reader": [
-			"xltReportDir": "."
-		]
-	]
-
-	container.deployVerticle("groovy:" + StarterVerticle.class.name, moduleTestConfig) { result ->
+	container.deployVerticle("groovy:" + StarterVerticle.class.name, TestConfig.module) { result ->
 		assertNotNull(result)
 		assertTrue("${result.cause()}", result.succeeded)
 		testComplete()
