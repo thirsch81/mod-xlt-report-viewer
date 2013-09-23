@@ -59,7 +59,11 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 		// JSON object containing all reports
 		rm.get("/reports") { HttpServerRequest request ->
 			logDebug("Received request ${request.method} ${request.uri}")
-			def response = new JsonObject().putArray("reports", new JsonArray(getSharedReports() as List)).encode()
+			def reports = (getSharedReports() as List).clone()
+			reports.each { report ->
+				report?.otto?.remove "actionDetails"
+			}
+			def response = new JsonObject().putArray("reports", new JsonArray(reports)).encode()
 			request.response.end(response)
 		}
 
@@ -101,8 +105,8 @@ class XltReportServerVerticle extends GroovyVerticleBase {
 		if(request.params["read"]) {
 			message.put("forceRead", true)
 		}
-		sendMessage("xlt-report-reader", , { success ->
-			request.response.end(success.body.toString())
+		sendMessage("xlt-report-reader", message, { success ->
+			request.response.end(new JsonObject(success.body).encode())
 		}, { error ->
 			request.response
 					.setStatusCode(500)

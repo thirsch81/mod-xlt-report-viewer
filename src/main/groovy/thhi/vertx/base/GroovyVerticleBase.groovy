@@ -121,7 +121,7 @@ abstract class GroovyVerticleBase extends Verticle {
 		}
 	}
 
-	void replyOk(Message message, json = [:]) {
+	void replyOk(Message message, Map json = [:]) {
 		replyStatus("ok", message, json)
 	}
 

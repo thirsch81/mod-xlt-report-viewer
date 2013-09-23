@@ -1,5 +1,6 @@
 package thhi.vertx.domain
 
+import groovy.json.JsonSlurper
 import java.text.SimpleDateFormat
 import java.util.regex.Pattern;
 
@@ -33,7 +34,7 @@ abstract class XltReport {
 			name : name,
 
 			indexPage : "${rootPath}/${name}/index.html" as String,
-			
+
 			testreportXml : "${rootPath}/${name}/testreport.xml" as String,
 
 			mainLoadGraphPath : "${rootPath}/${name}/charts/HitsPerSecond.png" as String,
@@ -58,23 +59,30 @@ abstract class XltReport {
 			total += it.count.text() as long
 			errors += it.errors.text() as long
 		}
-		
+
 		// parse the otto fragment
 		Map otto = [:]
 		try {
 			xml.otto.childNodes().each {
-				otto[it.name()] = it.text()
+				if("actionDetails"== it.name()) {
+					otto[it.name()] = new JsonSlurper().parseText(it.text().replaceAll(/\"/,/"/))
+				} else {
+					otto[it.name()] = it.text()
+				}
 			}
 		} catch (Exception e) {
 			// ignore
 		}
 
-		return [
+		def result = [
 			totalActions : total,
 			totalErrors: errors,
-			errorRatio : errors / total,
-			otto : otto
+			errorRatio : errors / total
 		]
+		if(otto) {
+			result.otto = otto
+		}
+		return result
 	}
 
 	private static Long getStartTime(name) {

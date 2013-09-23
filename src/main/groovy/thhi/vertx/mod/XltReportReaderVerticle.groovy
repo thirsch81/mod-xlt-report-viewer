@@ -38,7 +38,7 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 		if(forceRead || !isReportCached(name)) {
 			readXltReport(name, message)
 		} else {
-			replyOk(message, findCachedReports([name]))
+			replyOk(message, [reports: findCachedReports([name])])
 		}
 	}
 
@@ -84,7 +84,7 @@ class XltReportReaderVerticle extends GroovyVerticleBase {
 		try {
 			newXltReport(new File(xltReportDir, name))
 			if(message) {
-				replyOk(message, findCachedReports([name]))
+				replyOk(message, [report: findCachedReports([name])][0])
 			}
 		} catch (Exception e) {
 			def errorMsg = "Error when reading XLT report dir ${name}" as String
